@@ -1,3 +1,12 @@
-"The project structure for the online version is a set of independent services that call each other through the API, meaning each service calls the other services it needs, and it is implemented according to the Service Oriented Architecture concept."
-"Regarding the basic requirements, I have fully achieved them. I read the dataset files and saved them using the Pandas library, then I performed cleaning operations on the documents. After that, I created a TF-IDF Vectorizer and TF-IDF Matrix, and then I built a function that performs matching by calculating cosine similarity"
-"Regarding the additional requirements, I have achieved two tasks - Word Embedding and Query Refinement. I used the Sentence Transformer library and the BAAI/bge-small-en-v1.5 model, which significantly improved the accuracy. This model uses the dataset without cleaning and without cleaning the query, and it performs semantic matching, matching based on meaning rather than just word similarity."
+
+This project implements an online version structured around a collection of independent services interconnected via APIs, adhering to the principles of Service-Oriented Architecture (SOA). 
+
+Basic Requirements:
+- Data ingestion: Utilized the Pandas library to read and store dataset files.
+- Data preprocessing: Conducted cleaning operations on the documents.
+- Text representation: Implemented TF-IDF Vectorizer and TF-IDF Matrix.
+- Matching function: Developed a function to compute cosine similarity for matching.
+
+Additional Requirements:
+- Word Embedding: Incorporated the Sentence Transformer library and the BAAI/bge-small-en-v1.5 model to enhance accuracy via semantic matching.
+- Query Refinement: Applied the model to both the dataset and queries without prior cleaning, emphasizing semantic relevance over mere word similarity.
