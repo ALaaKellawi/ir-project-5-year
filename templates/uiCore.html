@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <title>IR Project</title>
+    <style>
+        /* General Styles */
+       body {
+         font-family: Arial, sans-serif;
+         margin: 0;
+         padding: 0;
+         background-color: #3aafa9;
+     }
+
+     /* Header Styles */
+     header {
+         padding: 20px;
+         text-align: center;
+         color: #fff;
+     }
+
+     .title {
+         font-size: 28px;
+         margin: 0;
+     }
+
+     /* Container Styles */
+     .container {
+         max-width: 800px;
+         margin: 20px auto;
+         padding:30px;
+         background-color: #fff;
+         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+         border-radius:40px
+     }
+
+     /* Search Form Styles */
+     .search-container {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         padding-left:30px;
+         margin-bottom: 20px;
+     }
+
+     .search-input {
+         flex-grow: 1;
+         padding: 10px;
+         font-size: 16px;
+         border: 1px solid #ccc;
+         border-radius: 4px;
+     }
+
+     .search-type {
+         padding: 10px;
+         font-size: 16px;
+         border: 1px solid #ccc;
+         border-radius: 4px;
+         margin-left: 10px;
+     }
+
+     .search-button {
+         background-color: #3aafa9;
+         color: #fff;
+         border: none;
+         padding: 10px 20px;
+         font-size: 16px;
+         border-radius: 4px;
+         cursor: pointer;
+         margin-left: 10px;
+     }
+
+     .search-button:hover {
+         background-color: #3498db;
+     }
+
+     /* Suggestions Container Styles */
+     .suggestions-container {
+         display: flex;
+         flex-direction: column;
+         gap: 5px;
+     }
+
+     .suggestions-container button {
+         background-color: #f0f0f0;
+         border: none;
+         padding: 10px;
+         font-size: 16px;
+         text-align: left;
+         cursor: pointer;
+     }
+
+     .suggestions-container button:hover {
+         background-color: #e6e6e6;
+     }
+
+     /* Results Container Styles */
+     .results-container {
+         margin-top: 20px;
+     }
+
+     .query-title {
+         font-size: 18px;
+         font-weight:bold;
+         color: #fff;
+         margin:10px;
+         margin-bottom: 10px;
+     }
+
+     .result-item {
+         font-size: 19px;
+         color: #172529;
+         font-weight:bold;
+         padding:18px;
+         height:50px;
+         margin:15px;
+         background-color:#def2f1;
+         align-items:center;
+         border-radius:18px;
+         height: auto;
+     }
+    </style>
+</head>
+<body>
+<header>
+    <h1 class="title">IR SEARCH ENGINE</h1>
+</header>
+<div class="container">
+    <form id="searchForm" method="POST" action="/process">
+        <div class="search-container">
+            <input type="text" id="inputData" name="input_data" placeholder="Search here" class="search-input"
+                   oninput="sendSuggestRequest()">
+            <select id="searchType" name="value" style="color: black; margin-left: 10px;" onchange="sendSuggestRequest()">
+                <option value="qoura">Qoura</option>
+                <option value="lifestyle">Lifestyle</option>
+            </select>
+            <button type="submit" class="search-button" onclick="clearSuggestions()">Search</button>
+        </div>
+    </form>
+    <div id="suggestionsContainer" class="suggestions-container"></div>
+</div>
+<div class="results-container">
+<!--    <h1 class="query-title">{{ query }}</h1>-->
+    {% for item in data %}
+    <p class="result-item">{{ item }}</p>
+    {% endfor %}
+</div>
+
+<script>
+<!--     function htmlDecode(input) {-->
+<!--    var doc = new DOMParser().parseFromString(input, "text/html");-->
+<!--    return doc.documentElement.textContent;-->
+<!--  }-->
+    const input = document.getElementById('inputData');
+    const suggestionsContainer = document.getElementById('suggestionsContainer');
+
+  function sendSuggestRequest() {
+    const query = input.value.trim();
+    const searchType = document.getElementById('searchType').value;  // استرد قيمة الـ value
+    console.log(searchType)
+    if (query.length > 0) {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                const suggestions = JSON.parse(xhr.responseText);
+                console.log(typeof suggestions);
+                renderSuggestions(suggestions);
+            }
+        };
+        const url = '/suggest';
+        const params = `input_data=${encodeURIComponent(query)}&search_type=${encodeURIComponent(searchType)}`;  // قم بإضافة قيمة الـ searchType هنا
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.send(params);
+    } else {
+        suggestionsContainer.innerHTML = '';
+    }
+}
+
+function renderSuggestions(suggestions) {
+  suggestionsContainer.innerHTML = '';
+  for (let i = 0; i < suggestions.length; i++) {
+    const suggestion = document.createElement('button');
+    suggestion.style.color = 'black';
+    suggestion.style.fontSize = '18px';
+    suggestion.style.textAlign = 'center';
+    suggestion.textContent = suggestions[i];
+    suggestion.onclick = function() {
+      input.value = this.textContent;
+    };
+    suggestionsContainer.appendChild(suggestion);
+     suggestionsContainer.appendChild(document.createElement('br'));
+  }
+}
+</script>
+</body>
+</html>
